@@ -10,7 +10,7 @@ describe('RECIPE: recipe-lab routes', () => {
     return pool.query(fs.readFileSync('./sql/setup.sql', 'utf-8'));
   });
 
-  it('creates a recipe', () => {
+  it('RECIPE: creates a recipe', () => {
     return request(app)
       .post('/api/v1/recipes')
       .send({
@@ -105,7 +105,6 @@ describe('RECIPE: recipe-lab routes', () => {
 
   });
 
-
   it('RECIPE: deletes a recipe by id', async() => {
     const recipes = await Promise.all([
       { name: 'cookies', directions: [] },
@@ -122,7 +121,7 @@ describe('RECIPE: recipe-lab routes', () => {
 
   });
 
-  it('LOGS: creates a log', async () => {
+  it('LOG: creates a log', async () => {
     const recipes = await Recipe.insert({ 
       name: 'cookies', 
       directions: [] 
@@ -131,18 +130,18 @@ describe('RECIPE: recipe-lab routes', () => {
     return request(app)
       .post('/api/v1/logs')
       .send({
-        "recipe_id": "1",
-        "date_of_event": "thur",
-        "notes": "ok Cookies",
-        "rating": 5
+        recipe_id: "1",
+        date_of_event: "thur",
+        notes: "ok Cookies",
+        rating: 5
       })
       .then(res => {
         expect(res.body).toEqual({
-          "id": "1",
-          "recipe_id": "1",
-          "date_of_event": "thur",
-          "notes": "ok Cookies",
-          "rating": '5'
+          id: "1",
+          recipe_id: "1",
+          date_of_event: "thur",
+          notes: "ok Cookies",
+          rating: '5'
         });
       });
   });
@@ -156,16 +155,16 @@ describe('RECIPE: recipe-lab routes', () => {
 
     const logs = await Promise.all([
       {
-        "recipe_id": "2",
-        "date_of_event": "Tuesday",
-        "notes": "Good Cookies",
-        "rating": "10"
+        recipe_id: "2",
+        date_of_event: "Tuesday",
+        notes: "Good Cookies",
+        rating: "10"
       },
       {
-          "recipe_id": "2",
-          "date_of_event": "thur",
-          "notes": "ok Cookies",
-          "rating": "5"
+          recipe_id: "2",
+          date_of_event: "thur",
+          notes: "ok Cookies",
+          rating: "5"
       }
     ].map(log => Log.insert(log)));
 
@@ -178,5 +177,77 @@ describe('RECIPE: recipe-lab routes', () => {
       });
   });
 
+  it('LOG: updates a recipe by id', async() => {
+    await Recipe.insert({ name: 'cookies', directions: [] });
+    
+    const recipe = await Log.insert({
+      
+      recipe_id: "1",
+      date_of_event: "Tuesday",
+      notes: "Good Cookies",
+      rating: "10"
+    });
 
+    return request(app)
+      .put(`/api/v1/logs/1`)
+      .send({
+        recipe_id: "1",
+        date_of_event: "Friday",
+        notes: "Bad Cookies",
+        rating: "1"
+      })
+      .then(res => {
+        expect(res.body).toEqual({
+          id: "1",
+          recipe_id: "1",
+          date_of_event: "Friday",
+          notes: "Bad Cookies",
+          rating: "1"
+        });
+      });
+  });
+
+  it('LOG: gets log by id', async() => {
+    await Recipe.insert({ name: 'cookies', directions: [] });
+    
+    const recipes = await Log.insert({
+      recipe_id: "1",
+      date_of_event: "Friday",
+      notes: "Bad Cookies",
+      rating: "1"
+    });
+
+    const res = await request(app)
+      .get('/api/v1/logs/1')
+      
+    expect(res.body).toEqual({
+      id: "1",
+      recipe_id: "1",
+      date_of_event: "Friday",
+      notes: "Bad Cookies",
+      rating: "1"
+    });
+  });
+
+  it('LOG: deletes a log by id', async() => {
+    await Recipe.insert({ name: 'cookies', directions: [] });
+
+    await Log.insert({
+      recipe_id: "1",
+      date_of_event: "Friday",
+      notes: "Bad Cookies",
+      rating: "1"
+    });
+
+    const res = await request(app)
+      .delete('/api/v1/logs/1')
+      
+    expect(res.body).toEqual({ 
+      id: '1',
+      recipe_id: "1",
+      date_of_event: "Friday",
+      notes: "Bad Cookies",
+      rating: "1" 
+    });
+  });
 });
