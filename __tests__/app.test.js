@@ -48,9 +48,30 @@ describe('RECIPE: recipe-lab routes', () => {
 
   it('RECIPE: gets all recipes', async() => {
     const recipes = await Promise.all([
-      { name: 'cookies', directions: [] },
-      { name: 'cake', directions: [] },
-      { name: 'pie', directions: [] }
+      { name: 'cookies', 
+        directions: [], 
+        ingredients: [{
+          amount: "2",
+          measurement: "cups",
+          name: "flour"
+        }] 
+      },
+      { name: 'cake', 
+        directions: [],
+        ingredients: [{
+          amount: "4",
+          measurement: "cups",
+          name: "flour"
+        }] 
+      },
+      { name: 'pie', 
+        directions: [],
+        ingredients: [{
+          amount: "1",
+          measurement: "cups",
+          name: "flour"
+        }] 
+      }
     ].map(recipe => Recipe.insert(recipe)));
 
     return request(app)
@@ -63,14 +84,14 @@ describe('RECIPE: recipe-lab routes', () => {
   });
 
   it('RECIPE: updates a recipe by id', async() => {
-    const recipe = await Recipe.insert({
-      name: 'cookies',
-      directions: [
-        'preheat oven to 375',
-        'mix ingredients',
-        'put dough on cookie sheet',
-        'bake for 10 minutes'
-      ],
+    const recipe = await Recipe.insert({ 
+      name: 'cookies', 
+      directions: [], 
+      ingredients: [{
+        amount: "2",
+        measurement: "cups",
+        name: "flour"
+      }] 
     });
 
     return request(app)
@@ -82,7 +103,12 @@ describe('RECIPE: recipe-lab routes', () => {
           'mix ingredients',
           'put dough on cookie sheet',
           'bake for 10 minutes'
-        ]
+        ],
+        ingredients: [{
+          amount: "2",
+          measurement: "cups",
+          name: "flour"
+        }]
       })
       .then(res => {
         expect(res.body).toEqual({
@@ -93,7 +119,12 @@ describe('RECIPE: recipe-lab routes', () => {
             'mix ingredients',
             'put dough on cookie sheet',
             'bake for 10 minutes'
-          ]
+          ],
+          ingredients: [{
+            amount: "2",
+            measurement: "cups",
+            name: "flour"
+          }]
         });
       });
   });
@@ -101,7 +132,12 @@ describe('RECIPE: recipe-lab routes', () => {
   it('RECIPE: gets recipe by id', async() => {
     const recipes = await Recipe.insert({ 
       name: 'cookies', 
-      directions: [] 
+      directions: [],
+      ingredients: [{
+        amount: "2",
+        measurement: "cups",
+        name: "flour"
+      }] 
     });
 
     const res = await request(app)
@@ -110,23 +146,40 @@ describe('RECIPE: recipe-lab routes', () => {
     expect(res.body).toEqual({ 
       id: '1',
       name: 'cookies', 
-      directions: [] 
+      directions: [],
+      ingredients: [{
+        amount: "2",
+        measurement: "cups",
+        name: "flour"
+      }] 
     });
-
   });
 
   it('RECIPE: deletes a recipe by id', async() => {
     const recipes = await Promise.all([
-      { name: 'cookies', directions: [] },
-      { name: 'cake', directions: [] },
-      { name: 'pie', directions: [] }
+      { name: 'cookies', 
+        directions: [], 
+        ingredients: [{
+          amount: "2",
+          measurement: "cups",
+          name: "flour"
+        }] 
+      }
     ].map(recipe => Recipe.insert(recipe)));
 
     const res = await request(app)
       .delete('/api/v1/recipes/1')
       
     expect(res.body).toEqual(
-      { id: '1', name: expect.any(String), directions: [] },
+      { id: '1', 
+        name: expect.any(String), 
+        directions: [], 
+        ingredients: [{
+          amount: "2",
+          measurement: "cups",
+          name: "flour"
+        }]
+      }
     );
 
   });
@@ -134,7 +187,12 @@ describe('RECIPE: recipe-lab routes', () => {
   it('LOG: creates a log', async () => {
     const recipes = await Recipe.insert({ 
       name: 'cookies', 
-      directions: [] 
+      directions: [], 
+      ingredients: [{
+        amount: "2",
+        measurement: "cups",
+        name: "flour"
+      }] 
     });    
     
     return request(app)
@@ -158,9 +216,30 @@ describe('RECIPE: recipe-lab routes', () => {
 
   it('LOG: gets all recipes', async() => {
     await Promise.all([
-      { name: 'cookies', directions: [] },
-      { name: 'cake', directions: [] },
-      { name: 'pie', directions: [] }
+      { name: 'cookies', 
+        directions: [], 
+        ingredients: [{
+          amount: "2",
+          measurement: "cups",
+          name: "flour"
+        }] 
+      },
+      { name: 'cake', 
+        directions: [],
+        ingredients: [{
+          amount: "4",
+          measurement: "cups",
+          name: "flour"
+        }] 
+      },
+      { name: 'pie', 
+        directions: [],
+        ingredients: [{
+          amount: "1",
+          measurement: "cups",
+          name: "flour"
+        }] 
+      }
     ].map(recipe => Recipe.insert(recipe)));
 
     const logs = await Promise.all([
@@ -188,10 +267,17 @@ describe('RECIPE: recipe-lab routes', () => {
   });
 
   it('LOG: updates a recipe by id', async() => {
-    await Recipe.insert({ name: 'cookies', directions: [] });
+    await Recipe.insert({ 
+      name: 'cookies', 
+      directions: [], 
+      ingredients: [{
+        amount: "2",
+        measurement: "cups",
+        name: "flour"
+      }] 
+    });
     
-    const recipe = await Log.insert({
-      
+    await Log.insert({
       recipe_id: "1",
       date_of_event: "Tuesday",
       notes: "Good Cookies",
@@ -218,7 +304,15 @@ describe('RECIPE: recipe-lab routes', () => {
   });
 
   it('LOG: gets log by id', async() => {
-    await Recipe.insert({ name: 'cookies', directions: [] });
+    await Recipe.insert({ 
+      name: 'cookies', 
+      directions: [], 
+      ingredients: [{
+        amount: "2",
+        measurement: "cups",
+        name: "flour"
+      }] 
+    });
     
     const recipes = await Log.insert({
       recipe_id: "1",
@@ -240,7 +334,15 @@ describe('RECIPE: recipe-lab routes', () => {
   });
 
   it('LOG: deletes a log by id', async() => {
-    await Recipe.insert({ name: 'cookies', directions: [] });
+    await Recipe.insert({ 
+      name: 'cookies', 
+      directions: [], 
+      ingredients: [{
+        amount: "2",
+        measurement: "cups",
+        name: "flour"
+      }] 
+    });
 
     await Log.insert({
       recipe_id: "1",
