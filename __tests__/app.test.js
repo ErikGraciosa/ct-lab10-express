@@ -3,8 +3,9 @@ const pool = require('../lib/utils/pool');
 const request = require('supertest');
 const app = require('../lib/app');
 const Recipe = require('../lib/models/recipe');
+const Log = require('../lib/models/log');
 
-describe('recipe-lab routes', () => {
+describe('RECIPE: recipe-lab routes', () => {
   beforeEach(() => {
     return pool.query(fs.readFileSync('./sql/setup.sql', 'utf-8'));
   });
@@ -35,7 +36,7 @@ describe('recipe-lab routes', () => {
       });
   });
 
-  it('gets all recipes', async() => {
+  it('RECIPE: gets all recipes', async() => {
     const recipes = await Promise.all([
       { name: 'cookies', directions: [] },
       { name: 'cake', directions: [] },
@@ -51,7 +52,7 @@ describe('recipe-lab routes', () => {
       });
   });
 
-  it('updates a recipe by id', async() => {
+  it('RECIPE: updates a recipe by id', async() => {
     const recipe = await Recipe.insert({
       name: 'cookies',
       directions: [
@@ -87,7 +88,7 @@ describe('recipe-lab routes', () => {
       });
   });
 
-  it('gets recipe by id', async() => {
+  it('RECIPE: gets recipe by id', async() => {
     const recipes = await Recipe.insert({ 
       name: 'cookies', 
       directions: [] 
@@ -105,7 +106,7 @@ describe('recipe-lab routes', () => {
   });
 
 
-  it('deletes a recipe by id', async() => {
+  it('RECIPE: deletes a recipe by id', async() => {
     const recipes = await Promise.all([
       { name: 'cookies', directions: [] },
       { name: 'cake', directions: [] },
@@ -120,5 +121,62 @@ describe('recipe-lab routes', () => {
     );
 
   });
+
+  it('LOGS: creates a log', async () => {
+    const recipes = await Recipe.insert({ 
+      name: 'cookies', 
+      directions: [] 
+    });    
+    
+    return request(app)
+      .post('/api/v1/logs')
+      .send({
+        "recipe_id": "1",
+        "date_of_event": "thur",
+        "notes": "ok Cookies",
+        "rating": 5
+      })
+      .then(res => {
+        expect(res.body).toEqual({
+          "id": "1",
+          "recipe_id": "1",
+          "date_of_event": "thur",
+          "notes": "ok Cookies",
+          "rating": '5'
+        });
+      });
+  });
+
+  it('LOG: gets all recipes', async() => {
+    await Promise.all([
+      { name: 'cookies', directions: [] },
+      { name: 'cake', directions: [] },
+      { name: 'pie', directions: [] }
+    ].map(recipe => Recipe.insert(recipe)));
+
+    const logs = await Promise.all([
+      {
+        "recipe_id": "2",
+        "date_of_event": "Tuesday",
+        "notes": "Good Cookies",
+        "rating": "10"
+      },
+      {
+          "recipe_id": "2",
+          "date_of_event": "thur",
+          "notes": "ok Cookies",
+          "rating": "5"
+      }
+    ].map(log => Log.insert(log)));
+
+    return request(app)
+      .get('/api/v1/logs')
+      .then(res => {
+        logs.forEach(log => {
+          expect(res.body).toContainEqual(log);
+        });
+      });
+  });
+
 
 });
