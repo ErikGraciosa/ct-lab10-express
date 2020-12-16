@@ -5,7 +5,7 @@ CREATE TABLE recipes (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   name TEXT NOT NULL,
   directions TEXT[],
-  ingredients JSONB
+  ingredients JSONB NOT NULL
 );
 
 CREATE TABLE logs (

@@ -20,7 +20,12 @@ describe('RECIPE: recipe-lab routes', () => {
           'mix ingredients',
           'put dough on cookie sheet',
           'bake for 10 minutes'
-        ]
+        ],
+        ingredients: [{
+          amount: "2",
+          measurement: "cups",
+          name: "flour"
+        }]
       })
       .then(res => {
         expect(res.body).toEqual({
@@ -31,7 +36,12 @@ describe('RECIPE: recipe-lab routes', () => {
             'mix ingredients',
             'put dough on cookie sheet',
             'bake for 10 minutes'
-          ]
+          ],
+          ingredients: [{
+            amount: "2",
+            measurement: "cups",
+            name: "flour"
+          }]
         });
       });
   });
