@@ -88,9 +88,10 @@ describe('recipe-lab routes', () => {
   });
 
   it('gets recipe by id', async() => {
-    const recipes = await Promise.resolve([
-      { name: 'cookies', directions: [] }
-    ].map(recipe => Recipe.insert(recipe)));
+    const recipes = await Recipe.insert({ 
+      name: 'cookies', 
+      directions: [] 
+    });
 
     const res = await request(app)
       .get('/api/v1/recipes/1')
