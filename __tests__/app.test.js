@@ -88,16 +88,15 @@ describe('recipe-lab routes', () => {
   });
 
   it('gets recipe by id', async() => {
-    const recipes = await Promise.all([
-      { name: 'cookies', directions: [] },
-      { name: 'cake', directions: [] },
-      { name: 'pie', directions: [] }
+    const recipes = await Promise.resolve([
+      { name: 'cookies', directions: [] }
     ].map(recipe => Recipe.insert(recipe)));
 
     const res = await request(app)
-      .delete('/api/v1/recipes/1')
+      .get('/api/v1/recipes/1')
       
-    expect(res.body).toContainEqual({ 
+    expect(res.body).toEqual({ 
+      id: '1',
       name: 'cookies', 
       directions: [] 
     });
@@ -115,10 +114,9 @@ describe('recipe-lab routes', () => {
     const res = await request(app)
       .delete('/api/v1/recipes/1')
       
-    expect(res.body).toContainEqual([
-      { name: 'cake', directions: [] },
-      { name: 'pie', directions: [] }
-    ]);
+    expect(res.body).toEqual(
+      { id: '1', name: expect.any(String), directions: [] },
+    );
 
   });
 
